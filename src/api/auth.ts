@@ -14,14 +14,7 @@ export async function loginRequest(
   email: string,
   password: string,
 ): Promise<LoginResponse> {
-  // FastAPI OAuth2 password flow expects form-encoded body
-  const params = new URLSearchParams()
-  params.append('username', email)
-  params.append('password', password)
-
-  const response = await apiClient.post<LoginResponse>('/auth/login', params, {
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-  })
+  const response = await apiClient.post<LoginResponse>('/auth/login', { email, password })
   return response.data
 }
 
