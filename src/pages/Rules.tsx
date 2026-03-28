@@ -46,10 +46,10 @@ export default function Rules() {
     try {
       const [active, hist] = await Promise.all([
         getActiveRules().catch(() => null),
-        getRulesHistory(),
+        getRulesHistory().catch(() => []),
       ])
       setActiveRule(active)
-      setHistory(hist.versions)
+      setHistory(hist)
     } catch (err) {
       if (axios.isAxiosError(err) && !err.response) {
         setLoadError('Cannot reach the server. Check your network connection.')

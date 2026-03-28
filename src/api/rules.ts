@@ -9,18 +9,18 @@ export interface RuleVersion {
   uploaded_by_email?: string
 }
 
-export interface RulesHistoryResponse {
-  versions: RuleVersion[]
-  total: number
+export interface ActiveRulesResponse {
+  document: RuleVersion | null
+  message: string
 }
 
-export async function getActiveRules(): Promise<RuleVersion> {
-  const response = await apiClient.get<RuleVersion>('/rules/active')
-  return response.data
+export async function getActiveRules(): Promise<RuleVersion | null> {
+  const response = await apiClient.get<ActiveRulesResponse>('/rules/active')
+  return response.data.document
 }
 
-export async function getRulesHistory(): Promise<RulesHistoryResponse> {
-  const response = await apiClient.get<RulesHistoryResponse>('/rules/history')
+export async function getRulesHistory(): Promise<RuleVersion[]> {
+  const response = await apiClient.get<RuleVersion[]>('/admin/rules/history')
   return response.data
 }
 
@@ -33,7 +33,7 @@ export async function uploadRules(
   formData.append('file', file)
   formData.append('version_label', versionLabel)
 
-  const response = await apiClient.post<RuleVersion>('/rules/upload', formData, {
+  const response = await apiClient.post<RuleVersion>('/admin/rules/upload', formData, {
     headers: { 'Content-Type': 'multipart/form-data' },
     onUploadProgress: (event) => {
       if (onProgress && event.total) {
