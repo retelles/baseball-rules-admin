@@ -2,10 +2,12 @@ import {
   createContext,
   useContext,
   useState,
+  useEffect,
   useCallback,
   ReactNode,
 } from 'react'
 import { loginRequest, logoutRequest } from '../api/auth'
+import { setAuthToken } from '../api/client'
 
 interface AuthUser {
   email: string
@@ -26,6 +28,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // Tokens stored in memory only — never persisted to localStorage
   const [token, setToken] = useState<string | null>(null)
   const [user, setUser] = useState<AuthUser | null>(null)
+
+  // Keep the axios interceptor in sync with the React token state
+  useEffect(() => {
+    setAuthToken(token)
+  }, [token])
 
   const login = useCallback(async (email: string, password: string) => {
     const data = await loginRequest(email, password)
